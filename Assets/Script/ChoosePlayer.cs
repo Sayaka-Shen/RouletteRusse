@@ -30,4 +30,9 @@ public class ChoosePlayer : MonoBehaviour
         _nbrPlayer.text = _nbrPlayerIndex.ToString();
     }
 
+    public void NameUI()
+    {
+
+    }
+
 }
