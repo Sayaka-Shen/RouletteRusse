@@ -2,8 +2,11 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using NaughtyAttributes;
+using DG.Tweening;
+using UnityEngine.EventSystems;
+using Unity.VisualScripting;
 
-public class PlayerSelection : MonoBehaviour
+public class PlayerSelection : MonoBehaviour, IPointerDownHandler
 {
     [Header("References")]
     [SerializeField] Text title;
@@ -20,6 +23,9 @@ public class PlayerSelection : MonoBehaviour
     Coroutine magnetizeCoroutine;
     int lastStep;
 
+    [Header("Shake")]
+    [SerializeField] int shakeForceMultiplier;
+
     enum ScrollViewState
     {
         MOVING,
@@ -27,7 +33,7 @@ public class PlayerSelection : MonoBehaviour
         MAGNETIZED
     }
 
-    ScrollViewState scrollViewState = ScrollViewState.MAGNETIZED;
+    [SerializeField, ReadOnly] ScrollViewState scrollViewState = ScrollViewState.MAGNETIZED;
 
     [SerializeField, Tooltip("After this time, title will show up again")] float maxAFKTime = 5f;
     float afkTime;
@@ -43,11 +49,6 @@ public class PlayerSelection : MonoBehaviour
         lastStep = GetStep();
         afkTime = maxAFKTime; // Setup to already shown title, but need to be overrided for intro fade
         CreatePlayerNumber();
-    }
-
-    void Start()
-    {
-
     }
 
     void Update()
@@ -86,19 +87,8 @@ public class PlayerSelection : MonoBehaviour
     }
 
     public void ScrollRectOnValueChanged()
-    {
-        if (scrollViewState == ScrollViewState.MAGNETIZED)
-        {
-            scrollViewState = ScrollViewState.MOVING;
-        }
-        
+    {        
         ResetAFKTimer();
-
-        if (!isTitleHidden)
-        {
-            HideTitle();
-        }
-
         if (GetStep() != lastStep)
         {
             lastStep = GetStep();
@@ -149,8 +139,33 @@ public class PlayerSelection : MonoBehaviour
         scrollViewState = ScrollViewState.MAGNETIZED;
     }
 
-    void SelectPlayerCount()
+    public void StartShake()
     {
-        Debug.Log($"Game start with {GetStep()} players");
+        scrollRect.transform.DOShakePosition(1, randomnessMode:ShakeRandomnessMode.Harmonic);
     }
+
+    public void ContinuousShake(float completionRatio)
+    {
+        scrollRect.transform.DOShakePosition(0.1f, completionRatio * 10, randomnessMode: ShakeRandomnessMode.Harmonic);
+    }
+
+    public void SelectPlayerCount()
+    {
+        Debug.Log($"Game start with {playerCount.y - GetStep()} players");
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        ResetAFKTimer();
+        scrollViewState = ScrollViewState.MOVING;
+        if (!isTitleHidden)
+        {
+            HideTitle();
+        }
+    }
+    
+    //public void OnPointerUp(PointerEventData eventData)
+    //{
+    //    
+    //}
 }
