@@ -4,9 +4,9 @@ using UnityEngine.UI;
 using NaughtyAttributes;
 using DG.Tweening;
 using UnityEngine.EventSystems;
-using Unity.VisualScripting;
+using System;
 
-public class PlayerSelection : MonoBehaviour, IPointerDownHandler
+public class PlayerCountSelection : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] Text title;
@@ -23,8 +23,12 @@ public class PlayerSelection : MonoBehaviour, IPointerDownHandler
     Coroutine magnetizeCoroutine;
     int lastStep;
 
+    [SerializeField, ReadOnly] bool isDragging = false;
+
     [Header("Shake")]
     [SerializeField] int shakeForceMultiplier;
+    Tween tweenShake;
+    float completionRatio;
 
     enum ScrollViewState
     {
@@ -43,23 +47,22 @@ public class PlayerSelection : MonoBehaviour, IPointerDownHandler
     [SerializeField, Tooltip("Duration in s for the title to fade out")] float fadeOutDuration = 2f;
     bool isTitleHidden = false;
 
+    public static event Action<int> OnPlayerNumberChosen;
+
     private void Awake()
     {
         deltaPlayerCount = playerCount.y - playerCount.x;
         lastStep = GetStep();
         afkTime = maxAFKTime; // Setup to already shown title, but need to be overrided for intro fade
         CreatePlayerNumber();
+        tweenShake = scrollRect.transform.DOShakePosition(0.1f, completionRatio * 10, randomnessMode: ShakeRandomnessMode.Harmonic);
+        tweenShake.onComplete += () => tweenShake.Restart();
     }
 
     void Update()
     {
         AFKTimer();
-
-        if (Mathf.Abs(scrollRect.velocity.y) < velocityThresholdToMagnetise && scrollViewState == ScrollViewState.MOVING)
-        {
-            float targetValue = GetStep() / (float)deltaPlayerCount;
-            magnetizeCoroutine = StartCoroutine(MagnetizeToValue(scrollRect, targetValue, magnetizeDuration));
-        }
+        CheckMagnetize();
     }
 
     void CreatePlayerNumber()
@@ -74,10 +77,13 @@ public class PlayerSelection : MonoBehaviour, IPointerDownHandler
 
     void AFKTimer()
     {
-        afkTime += Time.deltaTime;
-        if (afkTime > maxAFKTime)
+        if (!isDragging)
         {
-            ShowTitle();
+            afkTime += Time.deltaTime;
+            if (afkTime > maxAFKTime)
+            {
+                ShowTitle();
+            }
         }
     }
 
@@ -87,11 +93,17 @@ public class PlayerSelection : MonoBehaviour, IPointerDownHandler
     }
 
     public void ScrollRectOnValueChanged()
-    {        
-        ResetAFKTimer();
+    {
         if (GetStep() != lastStep)
         {
             lastStep = GetStep();
+        }
+
+        ResetAFKTimer();
+
+        if (isDragging)
+        {
+            scrollViewState = ScrollViewState.MOVING;
         }
     }
 
@@ -107,7 +119,7 @@ public class PlayerSelection : MonoBehaviour, IPointerDownHandler
         StartCoroutine(Fade(title, Color.white, fadeInDuration));
     }
 
-    IEnumerator Fade(MaskableGraphic fadable, Color targetColor, float duration)
+    IEnumerator Fade(MaskableGraphic fadable, Color targetColor, float duration) // COLOR DOTWEEN
     {
         float timer = 0;
         Color baseColor = fadable.color;
@@ -122,6 +134,15 @@ public class PlayerSelection : MonoBehaviour, IPointerDownHandler
     int GetStep()
     {
         return (int)Mathf.Round(Mathf.Clamp01(scrollRect.verticalScrollbar.value) * deltaPlayerCount);
+    }
+
+    void CheckMagnetize()
+    {
+        if (Mathf.Abs(scrollRect.velocity.y) < velocityThresholdToMagnetise && scrollViewState == ScrollViewState.MOVING && !isDragging)
+        {
+            float targetValue = GetStep() / (float)deltaPlayerCount;
+            magnetizeCoroutine = StartCoroutine(MagnetizeToValue(scrollRect, targetValue, magnetizeDuration));
+        }
     }
 
     IEnumerator MagnetizeToValue(ScrollRect scrollrect, float targetValue, float duration)
@@ -146,26 +167,32 @@ public class PlayerSelection : MonoBehaviour, IPointerDownHandler
 
     public void ContinuousShake(float completionRatio)
     {
-        scrollRect.transform.DOShakePosition(0.1f, completionRatio * 10, randomnessMode: ShakeRandomnessMode.Harmonic);
+        this.completionRatio = completionRatio;
     }
-
+    
     public void SelectPlayerCount()
     {
-        Debug.Log($"Game start with {playerCount.y - GetStep()} players");
+        gameObject.SetActive(false);
+        OnPlayerNumberChosen.Invoke(GetStep());
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public void OnBeginDrag(PointerEventData eventData)
     {
-        ResetAFKTimer();
-        scrollViewState = ScrollViewState.MOVING;
+        isDragging = true;
         if (!isTitleHidden)
         {
             HideTitle();
+            isTitleHidden = true;
         }
     }
-    
-    //public void OnPointerUp(PointerEventData eventData)
-    //{
-    //    
-    //}
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        Debug.Log("OnDrag");
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        isDragging = false;
+    }  
 }
