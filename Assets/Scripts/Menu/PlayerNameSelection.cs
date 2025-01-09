@@ -1,10 +1,15 @@
+using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerNameSelection : MonoBehaviour
 {
-    [SerializeField] ScriptableObject gameInfo;
+    [Header("References")]
+    [SerializeField] GameInfo gameInfo;
+    [SerializeField] InputField inputField;
 
     int playerLeft;
+    int playerCount;
 
     private void Awake()
     {
@@ -13,9 +18,13 @@ public class PlayerNameSelection : MonoBehaviour
 
     void BeginAskForName(int playerCount)
     {
+        this.playerCount = playerCount;
         playerLeft = playerCount;
+        gameInfo.Players.Capacity = playerCount;
+        inputField.onValidateInput += SaveName;
         AskForName();
     }
+
 
     void AskForName()
     {
@@ -30,4 +39,11 @@ public class PlayerNameSelection : MonoBehaviour
         }
         
     }
+
+    char SaveName(string text, int charIndex, char addedChar)
+    {
+        gameInfo.Players.Add((playerCount - playerLeft).ToString());
+        return '1';
+    }
+
 }

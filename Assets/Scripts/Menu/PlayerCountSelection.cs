@@ -11,6 +11,8 @@ public class PlayerCountSelection : MonoBehaviour
     [Header("References")]
     [SerializeField] Text title;
     [SerializeField] ScrollRect scrollRect;
+    [SerializeField] CanvasGroup canvasGroup;
+    [SerializeField] GameObject playerNameSelectionGO;
 
     [Header("General")]
     [SerializeField] GameObject playerCountPrefab;
@@ -28,7 +30,12 @@ public class PlayerCountSelection : MonoBehaviour
     [Header("Shake")]
     [SerializeField] int shakeForceMultiplier;
     Tween tweenShake;
-    float completionRatio;
+    TweenCallback tweenCallback;
+    [SerializeField, ReadOnly] float completionRatio;
+
+    [Header("OnSelectedPlayerCountParam")]
+    [SerializeField] float onSelectedPlayerCountDuration;
+    [SerializeField] float onSelectedPlayerCountScale;
 
     enum ScrollViewState
     {
@@ -39,10 +46,10 @@ public class PlayerCountSelection : MonoBehaviour
 
     [SerializeField, ReadOnly] ScrollViewState scrollViewState = ScrollViewState.MAGNETIZED;
 
-    [SerializeField, Tooltip("After this time, title will show up again")] float maxAFKTime = 5f;
-    float afkTime;
 
     [Header("Title")]
+    [SerializeField, Tooltip("After this time, title will show up again")] float maxAFKTime = 5f;
+    float afkTime;
     [SerializeField, Tooltip("Duration in s for the title to fade in")] float fadeInDuration = 2f;
     [SerializeField, Tooltip("Duration in s for the title to fade out")] float fadeOutDuration = 2f;
     bool isTitleHidden = false;
@@ -55,8 +62,12 @@ public class PlayerCountSelection : MonoBehaviour
         lastStep = GetStep();
         afkTime = maxAFKTime; // Setup to already shown title, but need to be overrided for intro fade
         CreatePlayerNumber();
-        tweenShake = scrollRect.transform.DOShakePosition(0.1f, completionRatio * 10, randomnessMode: ShakeRandomnessMode.Harmonic);
-        tweenShake.onComplete += () => tweenShake.Restart();
+        
+        tweenCallback = () =>
+        {
+            tweenShake = scrollRect.transform.DOShakePosition(0.1f, completionRatio * 10, randomnessMode: ShakeRandomnessMode.Harmonic);
+            tweenShake.OnComplete(tweenCallback);
+        };
     }
 
     void Update()
@@ -162,18 +173,34 @@ public class PlayerCountSelection : MonoBehaviour
 
     public void StartShake()
     {
-        scrollRect.transform.DOShakePosition(1, randomnessMode:ShakeRandomnessMode.Harmonic);
+        completionRatio = 0;
+        tweenCallback.Invoke();
     }
 
     public void ContinuousShake(float completionRatio)
     {
         this.completionRatio = completionRatio;
     }
+
+    public void StopShake()
+    {
+        completionRatio = 0;
+        tweenShake.Rewind();
+    }
     
     public void SelectPlayerCount()
     {
-        gameObject.SetActive(false);
-        OnPlayerNumberChosen.Invoke(GetStep());
+        StopShake(); // Need another tween, maybe explosion like, or fade
+        Sequence selectedSequence = DOTween.Sequence();
+        selectedSequence.Append(scrollRect.transform.DOScale(onSelectedPlayerCountScale, onSelectedPlayerCountDuration));
+        selectedSequence.Append(canvasGroup.DOFade(0, onSelectedPlayerCountDuration));
+        selectedSequence.onComplete += () =>
+        {
+            playerNameSelectionGO.SetActive(true);
+            OnPlayerNumberChosen?.Invoke(GetStep());
+            gameObject.SetActive(false);
+        };
+        selectedSequence.Play();
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -183,6 +210,10 @@ public class PlayerCountSelection : MonoBehaviour
         {
             HideTitle();
             isTitleHidden = true;
+        }
+        if (magnetizeCoroutine != null)
+        {
+            StopCoroutine(magnetizeCoroutine);
         }
     }
 
@@ -194,5 +225,5 @@ public class PlayerCountSelection : MonoBehaviour
     public void OnEndDrag(PointerEventData eventData)
     {
         isDragging = false;
-    }  
+    }
 }

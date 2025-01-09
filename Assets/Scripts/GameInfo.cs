@@ -7,5 +7,5 @@ using NaughtyAttributes;
 [CreateAssetMenu(fileName = "GameInfo", menuName = "Scriptable Objects/GameInfo")]
 public class GameInfo : ScriptableObject
 {
-    [SerializeField, NaughtyAttributes.ReadOnly] List<string> players = new(); 
+    [field: SerializeField] public List<string> Players { get; set; }
 }

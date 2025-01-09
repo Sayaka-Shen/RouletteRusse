@@ -9,7 +9,7 @@ public class HoldButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     [SerializeField] float holdDuration;
 
     [SerializeField, ReadOnly] float holdTime;
-    bool isHolding = false;
+    [SerializeField, ReadOnly] bool isHolding = false;
 
     [SerializeField] UnityEvent OnHoldStarted;
     [SerializeField] UnityEvent<float> OnHolding;
@@ -27,26 +27,33 @@ public class HoldButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         {
             holdTime += Time.deltaTime;
             OnHolding?.Invoke(holdTime / holdDuration);
-            if (holdTime > holdDuration)
+            if (holdTime >= holdDuration)
             {
+                ResetHold();
                 OnHoldCompleted?.Invoke();
             }
         }
     }
 
+    void ResetHold() // Reset state to next input
+    {
+        isHolding = false; 
+        holdTime = 0;
+    }
+
     public void OnPointerDown(PointerEventData eventData)
     {
+        Debug.Log("a");
         isHolding = true;
         OnHoldStarted?.Invoke();
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        isHolding = false;
+        ResetHold();
         if (holdTime < holdDuration)
         {
             OnHoldCanceled?.Invoke();
         }
-        holdTime = 0;
     }
 }
