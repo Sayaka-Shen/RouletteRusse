@@ -147,6 +147,11 @@ public class PlayerCountSelection : MonoBehaviour
         return (int)Mathf.Round(Mathf.Clamp01(scrollRect.verticalScrollbar.value) * deltaPlayerCount);
     }
 
+    int StepToInt(int step)
+    {
+        return playerCount.y - step;
+    }
+
     void CheckMagnetize()
     {
         if (Mathf.Abs(scrollRect.velocity.y) < velocityThresholdToMagnetise && scrollViewState == ScrollViewState.MOVING && !isDragging)
@@ -197,7 +202,7 @@ public class PlayerCountSelection : MonoBehaviour
         selectedSequence.onComplete += () =>
         {
             playerNameSelectionGO.SetActive(true);
-            OnPlayerNumberChosen?.Invoke(GetStep());
+            OnPlayerNumberChosen?.Invoke(StepToInt(GetStep()));
             gameObject.SetActive(false);
         };
         selectedSequence.Play();
@@ -219,7 +224,7 @@ public class PlayerCountSelection : MonoBehaviour
 
     public void OnDrag(PointerEventData eventData)
     {
-        Debug.Log("OnDrag");
+        // Debug.Log("OnDrag");
     }
 
     public void OnEndDrag(PointerEventData eventData)

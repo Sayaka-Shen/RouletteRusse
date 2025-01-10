@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class HoldButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    [SerializeField] float holdDuration;
+    [field: SerializeField] public float HoldDuration { get; private set; }
 
     [SerializeField, ReadOnly] float holdTime;
     [SerializeField, ReadOnly] bool isHolding = false;
@@ -26,8 +26,8 @@ public class HoldButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (isHolding)
         {
             holdTime += Time.deltaTime;
-            OnHolding?.Invoke(holdTime / holdDuration);
-            if (holdTime >= holdDuration)
+            OnHolding?.Invoke(holdTime / HoldDuration);
+            if (holdTime >= HoldDuration)
             {
                 ResetHold();
                 OnHoldCompleted?.Invoke();
@@ -43,7 +43,6 @@ public class HoldButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log("a");
         isHolding = true;
         OnHoldStarted?.Invoke();
     }
@@ -51,7 +50,7 @@ public class HoldButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public void OnPointerUp(PointerEventData eventData)
     {
         ResetHold();
-        if (holdTime < holdDuration)
+        if (holdTime < HoldDuration)
         {
             OnHoldCanceled?.Invoke();
         }
