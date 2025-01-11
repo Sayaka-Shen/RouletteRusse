@@ -25,19 +25,21 @@ public class PlayerNameSelection : MonoBehaviour
         nextSceneLoading = SceneManager.LoadSceneAsync(gameSceneString, LoadSceneMode.Single);
         nextSceneLoading.allowSceneActivation = false;
 
-        VolumeButton.OnVolumeDown += () => { Debug.Log("Down"); };
-        VolumeButton.OnVolumeUp += () => { Debug.Log("Up"); };
+        Clear();
     }
 
-    void BeginAskForName(int playerCount)
+    void Clear()
     {
-        Debug.Log(playerCount);
-
         foreach (Transform child in inputFieldWrapper.transform) // Clear prev children
         {
             Destroy(child.gameObject);
         }
 
+        gameInfo.Players.Clear();
+    }
+
+    void BeginAskForName(int playerCount)
+    {
         for (int i = 1; i <= playerCount; i++)
         {
             InputField inputField = Instantiate(inputFieldPrefab, inputFieldWrapper.transform).GetComponent<InputField>();
