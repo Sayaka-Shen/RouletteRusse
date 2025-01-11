@@ -50,15 +50,14 @@ public class PlayerNameSelection : MonoBehaviour
         }
         this.playerCount = playerCount;
         playerLeft = playerCount;
-        gameInfo.Players.Capacity = playerCount;
     }
 
     public void SaveNames()
     {
-        gameInfo.Players.Add((playerCount - playerLeft).ToString());
-
+        Debug.Log(inputFieldList.Count);
         foreach (InputField inputField in inputFieldList)
         {
+            Debug.Log(inputField.text);
             gameInfo.Players.Add(inputField.text);
         }
 
