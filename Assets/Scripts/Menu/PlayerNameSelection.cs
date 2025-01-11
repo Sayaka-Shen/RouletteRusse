@@ -19,14 +19,14 @@ public class PlayerNameSelection : MonoBehaviour
 
     AsyncOperation nextSceneLoading;
 
-    int playerLeft;
-    int playerCount;
-
     private void Awake()
     {
         PlayerCountSelection.OnPlayerNumberChosen += BeginAskForName;
         nextSceneLoading = SceneManager.LoadSceneAsync(gameSceneString, LoadSceneMode.Single);
         nextSceneLoading.allowSceneActivation = false;
+
+        VolumeButton.OnVolumeDown += () => { Debug.Log("Down"); };
+        VolumeButton.OnVolumeUp += () => { Debug.Log("Up"); };
     }
 
     void BeginAskForName(int playerCount)
@@ -48,16 +48,12 @@ public class PlayerNameSelection : MonoBehaviour
             }
             inputFieldList.Add(inputField);
         }
-        this.playerCount = playerCount;
-        playerLeft = playerCount;
     }
 
     public void SaveNames()
     {
-        Debug.Log(inputFieldList.Count);
         foreach (InputField inputField in inputFieldList)
         {
-            Debug.Log(inputField.text);
             gameInfo.Players.Add(inputField.text);
         }
 
