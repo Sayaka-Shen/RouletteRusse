@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Rendering;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,9 +23,18 @@ public class GameManager : MonoBehaviour
     [Header("Music Speed")]
     [SerializeField] private float slowSpeedHeartBeat = 0.8f;
     [SerializeField] private float fastSpeedHeartBeat = 1.2f;
+    
+    [Header("Android Flashlight")]
+    private bool _active;
+    private AndroidJavaObject _camera1;
+    
+    // Event 
+    public static event Action<int> OnDeathChanceChange;
 
     private void Start()
     {
+        CameraFlashlight();
+        
         VolumeButton.OnVolumeUp += Shoot;
         VolumeButton.OnVolumeDown += Shoot;
         
@@ -58,8 +69,14 @@ public class GameManager : MonoBehaviour
             SoundManager.Instance.PlaySound2D("ReloadSound");
             _reloadAnim.StartScroll();
 
+            StartCoroutine(FlashLightToggle());
+
             _playerCount--;
             _deathChance = 6;
+            MusicManager.Instance.PlayMusic("SlowHeartBeat");
+            MusicManager.Instance.MusicSource.pitch = slowSpeedHeartBeat;
+            
+            OnDeathChanceChange?.Invoke(_deathChance);
             
             VolumeButton.Instance.m_bGetVolumeFromPhone = false;
 
@@ -68,18 +85,13 @@ public class GameManager : MonoBehaviour
         else // Vivant le type
         {
             _deathChance--;
+            OnDeathChanceChange?.Invoke(_deathChance);
             SoundManager.Instance.PlaySound2D("EmptyShotSound");
             Debug.Log("Next Player");
 
             if (_deathChance > 3)
             {
-                MusicManager.Instance.PlayMusic("SlowHeartBeat");
-
-                if (_deathChance == 6)
-                {
-                    MusicManager.Instance.MusicSource.pitch = slowSpeedHeartBeat;
-                } 
-                else if (_deathChance == 5)
+                if (_deathChance == 5)
                 {
                     MusicManager.Instance.MusicSource.pitch = 1f;
                 }
@@ -140,6 +152,37 @@ public class GameManager : MonoBehaviour
         {
             _playerInfo.text = _gameInfo.name[index].ToString();
         }
+    }
+
+    private void CameraFlashlight()
+    {
+        AndroidJavaClass cameraClass = new AndroidJavaClass("android.hardware.Camera");
+
+        int camID = 0;
+        _camera1 = cameraClass.CallStatic<AndroidJavaObject>("open", camID);
+
+        if (_camera1 != null)
+        {
+            AndroidJavaObject cameraParameters = _camera1.Call<AndroidJavaObject>("getParameters");
+            cameraParameters.Call("setFlashMode", "torch");
+            _camera1.Call("setParameters", cameraParameters);
+        }
+        else
+        {
+            Debug.LogError("[CameraParametersAndroid] Camera not available");
+        }
+
+    }
+
+    IEnumerator FlashLightToggle()
+    {
+        _camera1.Call("startPreview");
+        _active = true;
+        
+        yield return new WaitForSeconds(0.2f);
+        
+        _camera1.Call("stopPreview");
+        _active = false;
     }
 }
 
