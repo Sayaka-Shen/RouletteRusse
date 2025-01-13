@@ -3,11 +3,11 @@ using UnityEngine;
 public class SpriteScroller : MonoBehaviour
 {
     public SpriteRenderer spriteRenderer; 
-    public float scrollSpeed = 1f;
-    public float scrollDuration = 2f; 
+    public float scrollSpeed = 1f; 
+    public float scrollDuration = 2f;
 
-    private Material material;
-    private float elapsedTime = 0f; 
+    private Material material; 
+    private float elapsedTime = 0f;
     private bool isScrolling = false;
 
     void Start()
@@ -39,6 +39,7 @@ public class SpriteScroller : MonoBehaviour
             else
             {
                 isScrolling = false;
+
                 material.mainTextureOffset = Vector2.zero;
             }
         }
