@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9217b196bf8ba3649b7fdf010920ee6b
+guid: fe48ed0f7a7c4fb439171acff517b37a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4378871512965562322
-    second: chargeur_0
+      213: -7495040542992703652
+    second: Magnum_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,12 +37,12 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
-    wrapU: 0
-    wrapV: 0
-    wrapW: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: chargeur_0
+      name: Magnum_0
       rect:
         serializedVersion: 2
-        x: 657
-        y: 407
-        width: 193
-        height: 207
+        x: 29
+        y: 69
+        width: 1222
+        height: 602
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e204c982f8f1b33c0800000000000000
-      internalID: -4378871512965562322
+      spriteID: c5fd4c926544cf790800000000000000
+      internalID: -7495040542992703652
       vertices: []
       indices: 
       edges: []
@@ -147,8 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      chargeur_0: -4378871512965562322
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

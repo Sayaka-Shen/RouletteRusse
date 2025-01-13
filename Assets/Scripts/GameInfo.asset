@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b2ef2b71472c8c479e0bcacc4377c9a, type: 3}
   m_Name: GameInfo
   m_EditorClassIdentifier: 
-  <Players>k__BackingField: []
+  <Players>k__BackingField:
+  - boo
+  - biboo
+  - booboo
