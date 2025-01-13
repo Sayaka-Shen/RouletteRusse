@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class VolumeButton : MonoBehaviour
 {
+    public static VolumeButton Instance;
+    
     public bool m_bGetVolumeFromPhone = true;
 
     private float m_fPrevVolume = -1;

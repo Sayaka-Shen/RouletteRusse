@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cfd05e97-98a3-42fb-a060-dba84338728b" name="Changes" comment="" />
+    <list default="true" id="cfd05e97-98a3-42fb-a060-dba84338728b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.RouletteRusse/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RouletteRusse/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/GenScript/GameManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/GenScript/GameManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Music&amp;Sound/MusicManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Music&amp;Sound/MusicManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Utility/VolumeButton.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Utility/VolumeButton.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -12,6 +17,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.shadergraph/Editor/Generation/Targets/BuiltIn/Editor/AssetPostProcessors/MaterialPostprocessor.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
@@ -88,6 +96,7 @@
       <updated>1736244605302</updated>
       <workItem from="1736244606882" duration="1312000" />
       <workItem from="1736508069586" duration="2000" />
+      <workItem from="1736773746237" duration="1005000" />
     </task>
     <servers />
   </component>

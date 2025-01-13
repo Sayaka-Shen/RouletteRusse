@@ -1,16 +1,10 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Rendering;
 
 public class GameManager : MonoBehaviour
 {
-    public enum GameState
-    {
-        Init,
-        StartRound,
-        EndRound
-    }
-
     [Header("General Settings")]
     [SerializeField] private int _playerNumber;
     [SerializeField] private GameInfo _gameInfo;
@@ -23,9 +17,16 @@ public class GameManager : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private Animator _gunAnimator;
     [SerializeField] private SpriteScroller _reloadAnim;
+    
+    [Header("Music Speed")]
+    [SerializeField] private float slowSpeedHeartBeat = 0.8f;
+    [SerializeField] private float fastSpeedHeartBeat = 1.2f;
 
     private void Start()
     {
+        VolumeButton.OnVolumeUp += Shoot;
+        VolumeButton.OnVolumeDown += Shoot;
+        
         _playerNumber = _gameInfo.Players.Count;
         _playerCount = _playerNumber;
         _deathChance = 6;
@@ -37,10 +38,11 @@ public class GameManager : MonoBehaviour
     {
         _roundCount++;
         Debug.Log("Le round commence !");
-        MusicManager.Instance.PlayMusic("SlowHeartBeat");
         SoundManager.Instance.PlaySound2D("ReloadSound");
         _reloadAnim.StartScroll();
         DifferentUI();
+
+        VolumeButton.Instance.m_bGetVolumeFromPhone = true;
     }
 
     public void Shoot()
@@ -56,9 +58,10 @@ public class GameManager : MonoBehaviour
             SoundManager.Instance.PlaySound2D("ReloadSound");
             _reloadAnim.StartScroll();
 
-
             _playerCount--;
             _deathChance = 6;
+            
+            VolumeButton.Instance.m_bGetVolumeFromPhone = false;
 
             PostRound();
         }
@@ -68,9 +71,39 @@ public class GameManager : MonoBehaviour
             SoundManager.Instance.PlaySound2D("EmptyShotSound");
             Debug.Log("Next Player");
 
-            if (_deathChance <= 4)
+            if (_deathChance > 3)
+            {
+                MusicManager.Instance.PlayMusic("SlowHeartBeat");
+
+                if (_deathChance == 6)
+                {
+                    MusicManager.Instance.MusicSource.pitch = slowSpeedHeartBeat;
+                } 
+                else if (_deathChance == 5)
+                {
+                    MusicManager.Instance.MusicSource.pitch = 1f;
+                }
+                else if (_deathChance == 4)
+                {
+                    MusicManager.Instance.MusicSource.pitch = fastSpeedHeartBeat;
+                }
+            }
+            else if (_deathChance <= 3)
             {
                 MusicManager.Instance.PlayMusic("FastHeartBeat");
+                
+                if (_deathChance == 3)
+                {
+                    MusicManager.Instance.MusicSource.pitch = slowSpeedHeartBeat;
+                } 
+                else if (_deathChance == 2)
+                {
+                    MusicManager.Instance.MusicSource.pitch = 1f;
+                }
+                else if (_deathChance == 1)
+                {
+                    MusicManager.Instance.MusicSource.pitch = fastSpeedHeartBeat;
+                }
             }
         }
     }
