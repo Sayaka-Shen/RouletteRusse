@@ -1411,7 +1411,7 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
-          m_FloatArgument: 1
+          m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
@@ -1769,7 +1769,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c78d2b32136684f4cade8f6916922b10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <HoldDuration>k__BackingField: 2
+  <HoldDuration>k__BackingField: 1
   holdTime: 0
   isHolding: 0
   OnHoldStarted:
@@ -2032,71 +2032,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
---- !u!1 &1563605955
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1563605956}
-  - component: {fileID: 1563605957}
-  m_Layer: 5
-  m_Name: PlayerSelection
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1563605956
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563605955}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 406964251}
-  - {fileID: 1432304511}
-  - {fileID: 985706000}
-  m_Father: {fileID: 2067492341}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1563605957
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563605955}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bff204da7c585147be0838d81598a6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  title: {fileID: 1432304512}
-  scrollRect: {fileID: 985706001}
-  playerCountPrefab: {fileID: 6755998562134756118, guid: 6a21545cec43c0648a2a5adb6f185225, type: 3}
-  playerCount: {x: 2, y: 6}
-  deltaPlayerCount: 0
-  velocityThresholdToMagnetise: 25
-  magnetizeDuration: 0.5
-  lastStep: 0
-  scrollViewState: 2
-  maxAFKTime: 3
-  afkTime: 0
-  fadeInDuration: 1
-  fadeOutDuration: 2
-  isTitleHidden: 0
 --- !u!1 &1592177602
 GameObject:
   m_ObjectHideFlags: 0

@@ -19,25 +19,27 @@ public class PlayerNameSelection : MonoBehaviour
 
     AsyncOperation nextSceneLoading;
 
-    int playerLeft;
-    int playerCount;
-
     private void Awake()
     {
         PlayerCountSelection.OnPlayerNumberChosen += BeginAskForName;
         nextSceneLoading = SceneManager.LoadSceneAsync(gameSceneString, LoadSceneMode.Single);
         nextSceneLoading.allowSceneActivation = false;
+
+        Clear();
     }
 
-    void BeginAskForName(int playerCount)
+    void Clear()
     {
-        Debug.Log(playerCount);
-
         foreach (Transform child in inputFieldWrapper.transform) // Clear prev children
         {
             Destroy(child.gameObject);
         }
 
+        gameInfo.Players.Clear();
+    }
+
+    void BeginAskForName(int playerCount)
+    {
         for (int i = 1; i <= playerCount; i++)
         {
             InputField inputField = Instantiate(inputFieldPrefab, inputFieldWrapper.transform).GetComponent<InputField>();
@@ -48,15 +50,10 @@ public class PlayerNameSelection : MonoBehaviour
             }
             inputFieldList.Add(inputField);
         }
-        this.playerCount = playerCount;
-        playerLeft = playerCount;
-        gameInfo.Players.Capacity = playerCount;
     }
 
     public void SaveNames()
     {
-        gameInfo.Players.Add((playerCount - playerLeft).ToString());
-
         foreach (InputField inputField in inputFieldList)
         {
             gameInfo.Players.Add(inputField.text);
