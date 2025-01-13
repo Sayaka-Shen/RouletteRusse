@@ -16,7 +16,7 @@ public class DeathChanceOverlay : MonoBehaviour
 
     private void Awake()
     {
-        //GameManager.OnDeathChanceChange += OnDeathChanceChange;
+        GameManager.OnDeathChanceChange += OnDeathChanceChange;
         NewTween();
     }
 

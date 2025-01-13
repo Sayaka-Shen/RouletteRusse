@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: GameInfo
   m_EditorClassIdentifier: 
   <Players>k__BackingField:
-  - boo
-  - biboo
-  - booboo
+  - ccc
+  - aaa
+  - bbb
