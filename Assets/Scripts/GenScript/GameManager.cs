@@ -3,6 +3,9 @@ using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Linq;
+using System;
+using Random = UnityEngine.Random;
 
 
 public class GameManager : MonoBehaviour
@@ -18,16 +21,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _playerNumber;
     [SerializeField] private GameInfo _gameInfo;
     [SerializeField] private Text _playerInfo;
+    [SerializeField] private GameObject _retryGame;
     private int _playerCount;
     private int _deathChance;
     private int _randomNumber;
     private int _roundCount = 0;
-    private int _lastPlayer;
+    private string _player;
     private List<int> list = new List<int>();
-    private List<int> _players = new List<int>();
+    private List<string> _players = new List<string>();
 
     [Header("Animation")]
     [SerializeField] private Animator _gunAnimator;
+    [SerializeField] private Animator _flashAnimator;
     //[SerializeField] private Animator _gunAnimator2;
     //[SerializeField] private SpriteScroller _reloadAnim;
 
@@ -37,15 +42,18 @@ public class GameManager : MonoBehaviour
         _playerCount = _playerNumber;
         _deathChance = 6;
 
+        _retryGame.SetActive(false);
+        _players = _gameInfo.Players.ToArray().ToList();
+
         PreRound();
     }
 
     private void PreRound()
     {
-        for (int i = 1; i < _playerCount; i++)
+
+        for (int i = 0; i < _playerCount; i++)
         {
-            list.Add(i + 1);
-            _players.Add(i + 1);
+            list.Add(i);
         }
 
         _roundCount++;
@@ -58,7 +66,6 @@ public class GameManager : MonoBehaviour
     public void Shoot()
     {
         _randomNumber = Random.Range(1, _deathChance);
-        _gunAnimator.SetTrigger("Shoot");
 
         // Mort le bro
         if (_randomNumber == 1)
@@ -66,19 +73,23 @@ public class GameManager : MonoBehaviour
             SoundManager.Instance.PlaySound2D("ShotSound");
             SoundManager.Instance.PlaySound2D("FallBodySound");
             SoundManager.Instance.PlaySound2D("ReloadSound");
+            _gunAnimator.SetTrigger("Shoot");
 
             _playerCount--;
             _deathChance = 6;
+
+            _flashAnimator.SetTrigger("Flash");
+            _players.Remove(_player);
 
             PostRound();
         }
         else // Vivant le type
         {
-            DifferentUI();
             _deathChance--;
             SoundManager.Instance.PlaySound2D("EmptyShotSound");
             Debug.Log("Next Player");
 
+            DifferentUI();
             if (_deathChance <= 4)
             {
                 MusicManager.Instance.PlayMusic("FastHeartBeat");
@@ -88,35 +99,32 @@ public class GameManager : MonoBehaviour
 
     private void PostRound() // Ecran de relance pour le battle royale
     {
-        Debug.Log($"Le player {_playerNumber - _playerCount} est mort! ");
+        Debug.Log($"Le player {_playerInfo.text.ToString()} est mort! ");
         list.Clear();
+        DifferentUI();
+
         if (_playerCount == 1)
         {
             _roundCount = 0;
-            Debug.Log("Fin du round tout le monde est mort sauf toi, rappuyer sur le bouton pour rejouer");
+            Debug.Log($"Fin du round tout le monde est mort sauf {_players[0]}, rappuyer sur le bouton pour rejouer");
+            _retryGame.SetActive(true);
         }
         else
         {
             PreRound();
         }
-
     }
 
     private void DifferentUI()
     {
-        int index = Random.Range(1, _players.Count);
-
-        if (_players.Count == 0)
-        {
-            _players = list;
-        }
+        int index = Random.Range(0, _players.Count);
 
         for(int i =  0; i < _players.Count; i++)
         {
             if (index == i)
             {
                 _playerInfo.text = _gameInfo.Players[index];
-                _players.Remove(index);
+                _player = _playerInfo.text.ToString();
             }
         }
     }
