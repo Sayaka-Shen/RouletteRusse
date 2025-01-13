@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 
 public class GameManager : MonoBehaviour
@@ -16,12 +17,14 @@ public class GameManager : MonoBehaviour
     [Header("General Settings")]
     [SerializeField] private int _playerNumber;
     [SerializeField] private GameInfo _gameInfo;
-    [SerializeField] private TextMeshProUGUI _playerInfo;
+    [SerializeField] private Text _playerInfo;
     private int _playerCount;
     private int _deathChance;
     private int _randomNumber;
     private int _roundCount = 0;
+    private int _lastPlayer;
     private List<int> list = new List<int>();
+    private List<int> _players = new List<int>();
 
     [Header("Animation")]
     [SerializeField] private Animator _gunAnimator;
@@ -39,15 +42,16 @@ public class GameManager : MonoBehaviour
 
     private void PreRound()
     {
-        for(int i = 0 ; i < _playerCount; i++)
+        for (int i = 1; i < _playerCount; i++)
         {
-            list.Add(i+1);
+            list.Add(i + 1);
+            _players.Add(i + 1);
         }
+
         _roundCount++;
         Debug.Log("Le round commence !");
         MusicManager.Instance.PlayMusic("SlowHeartBeat");
         SoundManager.Instance.PlaySound2D("ReloadSound");
-        //_reloadAnim.StartScroll();
         DifferentUI();
     }
 
@@ -55,7 +59,6 @@ public class GameManager : MonoBehaviour
     {
         _randomNumber = Random.Range(1, _deathChance);
         _gunAnimator.SetTrigger("Shoot");
-        //_gunAnimator2.SetTrigger("Shoot");
 
         // Mort le bro
         if (_randomNumber == 1)
@@ -63,8 +66,6 @@ public class GameManager : MonoBehaviour
             SoundManager.Instance.PlaySound2D("ShotSound");
             SoundManager.Instance.PlaySound2D("FallBodySound");
             SoundManager.Instance.PlaySound2D("ReloadSound");
-            //_reloadAnim.StartScroll();
-
 
             _playerCount--;
             _deathChance = 6;
@@ -103,22 +104,21 @@ public class GameManager : MonoBehaviour
 
     private void DifferentUI()
     {
-        int index = Random.Range(1, _playerCount);
-        foreach(int nbr in list)
+        int index = Random.Range(1, _players.Count);
+
+        if (_players.Count == 0)
         {
-            if (nbr != index || list == null)
+            _players = list;
+        }
+
+        for(int i =  0; i < _players.Count; i++)
+        {
+            if (index == i)
             {
-                if (index >= 1 && index <= _gameInfo.name.Length)
-                {
-                    _playerInfo.text = _gameInfo.Players[index];
-                    list.Add(index);
-                }
+                _playerInfo.text = _gameInfo.Players[index];
+                _players.Remove(index);
             }
-            else
-            {
-                index = list[0];
-            }
-        }  
+        }
     }
 }
 
