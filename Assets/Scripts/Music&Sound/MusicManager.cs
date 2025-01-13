@@ -9,6 +9,11 @@ public class MusicManager : MonoBehaviour
     [SerializeField] private AudioSource _musicSource;
     [SerializeField] private MusicLibrary _musicLibrary;
 
+    public AudioSource MusicSource
+    {
+        get { return _musicSource; }
+    }
+
     private void Awake()
     {
         if(Instance != null)

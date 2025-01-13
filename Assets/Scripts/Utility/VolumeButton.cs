@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class VolumeButton : MonoBehaviour
 {
+    public static VolumeButton Instance;
+    
     public bool m_bGetVolumeFromPhone = true;
 
     private float m_fPrevVolume = -1;
@@ -11,6 +13,19 @@ public class VolumeButton : MonoBehaviour
 
     public static event Action OnVolumeUp;
     public static event Action OnVolumeDown;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(this);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     //Get phone volume if running or android or application volume if running on pc
     //(or wanted by user)
